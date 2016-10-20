@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         lff.WriteIntoFile(myList);
     }
-
+    //changes
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
