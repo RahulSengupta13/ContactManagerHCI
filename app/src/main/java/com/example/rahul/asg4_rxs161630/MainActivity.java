@@ -1,5 +1,6 @@
 package com.example.rahul.asg4_rxs161630;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,24 +20,33 @@ public class MainActivity extends AppCompatActivity {
 
     ListView lvContact;
     Context context = MainActivity.this;
-    ArrayList myList = new ArrayList();
-    public final static String EXTRA_CONTACT_NAME= "com.example.rahul.asg4_rx2161630.NAME";
-    public final static String EXTRA_CONTACT_PHONE= "com.example.rahul.asg4_rx2161630.PHONE";
-    public final static String EXTRA_CONTACT_EMAIL= "com.example.rahul.asg4_rx2161630.EMAIL";
-    String[] title = new String[]{
-            "Title 1", "Title 2", "Title 3", "Title 4",
-            "Title 5", "Title 6", "Title 7", "Title 8"
-    };
-    String[] desc = new String[]{
-            "Desc 1", "Desc 2", "Desc 3", "Desc 4",
-            "Desc 5", "Desc 6", "Desc 7", "Desc 8"
-    };
-    int[] img = new int[]{
-            android.support.v7.appcompat.R.drawable.abc_ic_star_black_16dp, android.support.v7.appcompat.R.drawable.abc_ic_star_black_16dp,
-            android.support.v7.appcompat.R.drawable.abc_ic_star_black_16dp, android.support.v7.appcompat.R.drawable.abc_ic_star_black_16dp,
-            android.support.v7.appcompat.R.drawable.abc_ic_star_black_16dp, android.support.v7.appcompat.R.drawable.abc_ic_star_black_16dp,
-            android.support.v7.appcompat.R.drawable.abc_ic_star_black_16dp, android.support.v7.appcompat.R.drawable.abc_ic_star_black_16dp
-    };
+    ArrayList<ListData> myList;
+    ListViewAdapter contactAdapter;
+    FileManager lff = new FileManager(context);
+    public final static String EXTRA_CONTACT_NAME = "com.example.rahul.asg4_rx2161630.NAME";
+    public final static String EXTRA_CONTACT_PHONE = "com.example.rahul.asg4_rx2161630.PHONE";
+    public final static String EXTRA_CONTACT_EMAIL = "com.example.rahul.asg4_rx2161630.EMAIL";
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Toast.makeText(context,"Activity Restarted", Toast.LENGTH_SHORT).show();
+        contactAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(context,"Application shutting down", Toast.LENGTH_SHORT).show();
+        lff.WriteIntoFile(myList);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        lff.WriteIntoFile(myList);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +54,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         lvContact = (ListView) findViewById(R.id.lv_contact);
-        getData();
-        lvContact.setAdapter(new ListViewAdapter(context,myList));
+        //getData();=
+        myList = lff.ReadFromFile();
+        contactAdapter = new ListViewAdapter(context,myList);
+        lvContact.setAdapter(contactAdapter);
+        if(myList.size() == 0)
+            Toast.makeText(context,"No contacts found", Toast.LENGTH_SHORT).show();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,22 +70,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        lvContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*lvContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 ListData data = (ListData) lvContact.getItemAtPosition(position);
-                Intent intent = new Intent(context,EditContact.class);
+                Intent intent = new Intent(context,AddContact.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(EXTRA_CONTACT_NAME,data.getName());
                 bundle.putString(EXTRA_CONTACT_EMAIL,data.getEmail());
                 bundle.putString(EXTRA_CONTACT_PHONE,data.getPhone());
+                bundle.putString("EXTRA_TYPE","EDIT");
                 intent.putExtras(bundle);
                 startActivity(intent);
                 Toast.makeText(context, "Opening contact information", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,21 +107,31 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
+        else if(id == R.id.action_add_contact)
+        {
+            Intent intent = new Intent(context,AddContact.class);
+            intent.putExtra("EXTRA_TYPE","ADD");
+            startActivityForResult(intent,0);
+        }
         return super.onOptionsItemSelected(item);
     }
 
-    private void getData()
-    {
-        for (int i = 0; i < title.length; i++) {
-        // Create a new object for each list item
-        ListData ld = new ListData();
-        ld.setName(title[i]);
-        ld.setEmail(title[i]);
-        ld.setPhone(desc[i]);
-        ld.setImgResId(img[i]);
-        myList.add(ld);
-    }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 0)
+        {
+            if(resultCode == Activity.RESULT_OK)
+            {
+                ListData listData = new ListData();
+                listData.setName(data.getStringExtra("Name"));
+                listData.setPhone(data.getStringExtra("Phone"));
+                listData.setEmail(data.getStringExtra("Email"));
+                Toast.makeText(context,data.getStringExtra("Name"),Toast.LENGTH_SHORT).show();
+                myList.add(listData);
+                contactAdapter.notifyDataSetChanged();
+                lff.WriteIntoFile(myList);
+            }
+        }
     }
 }

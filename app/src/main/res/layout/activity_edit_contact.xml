@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.rahul.asg4_rxs161630.EditContact"
+    tools:context="com.example.rahul.asg4_rxs161630.AddContact"
     android:orientation="vertical">
 
     <LinearLayout
