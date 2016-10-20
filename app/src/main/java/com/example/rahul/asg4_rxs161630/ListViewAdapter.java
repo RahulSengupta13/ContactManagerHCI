@@ -55,17 +55,19 @@ public class ListViewAdapter extends BaseAdapter {
         myViewHolder.name.setText(currentListData.getName());
         myViewHolder.email.setText(currentListData.getEmail());
         myViewHolder.phone.setText(currentListData.getPhone());
-        myViewHolder.image.setImageResource(currentListData.getImgResId());
+        myViewHolder.lname.setText(currentListData.getLName()+", ");
+        myViewHolder.image.setImageResource(R.mipmap.contact_image);
         return convertView;
     }
 
     private class ViewHolder{
-        TextView name,email,phone;
+        TextView name,email,phone,lname;
         ImageView image;
         public ViewHolder(View item){
             name = (TextView)item.findViewById(R.id.contact_name);
             email = (TextView)item.findViewById(R.id.contact_email);
             phone = (TextView)item.findViewById(R.id.contact_phone);
+            lname = (TextView)item.findViewById(R.id.contact_Lname);
             image = (ImageView)item.findViewById(R.id.contact_image);
         }
     }

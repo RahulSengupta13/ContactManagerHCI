@@ -5,7 +5,7 @@ package com.example.rahul.asg4_rxs161630;
  */
 
 public class ListData {
-    String name,email,phone;
+    String name,email,phone, lname;
     int imgResId;
     public String getName() {
         return name;
@@ -16,6 +16,14 @@ public class ListData {
     }
     public String getEmail() {
         return email;
+    }
+
+    public String getLName() {
+        return lname;
+    }
+
+    public void setLName(String Name) {
+        lname = Name;
     }
 
     public void setEmail(String Email) {

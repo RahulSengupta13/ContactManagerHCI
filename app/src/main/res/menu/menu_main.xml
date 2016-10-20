@@ -6,7 +6,34 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="never" >
+        <menu>
+            <item android:title="Sort By">
+                <menu>
+                    <item android:title="First Name"
+                        android:id="@+id/sort_first"/>
+                    <item android:title="Last Name"
+                        android:id="@+id/sort_last"/>
+                </menu>
+
+            </item>
+
+            <item
+                android:orderInCategory="100"
+                android:title="Set Theme">
+                <menu>
+                    <item
+                        android:title="Light"
+                        android:id="@+id/theme_light_btn"/>
+                    <item
+                        android:title="Dark"
+                        android:id="@+id/theme_dark_btn"/>
+                </menu>
+
+            </item>
+        </menu>
+
+    </item>
     <item
         android:id="@+id/action_add_contact"
         android:orderInCategory="100"

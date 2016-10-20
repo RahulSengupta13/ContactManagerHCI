@@ -17,4 +17,28 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+
+    <style name="appBackgroundDark">
+        <item name="android:background">@color/colorDarkBackground</item>
+    </style>
+
+    <style name="appBackgroundLight">
+        <item name="android:background">@color/colorLightBackground</item>
+    </style>
+
+    <style name="appTextColorDark">
+        <item name="android:textColor">@color/colorTextDark</item>
+        <item name="android:textColorHint">@color/colorHintText</item>
+    </style>
+
+    <style name="appTextColorLight">
+        <item name="android:textColor">@color/colorTextLight</item>
+        <item name="android:textColorHint">@color/colorHintText</item>
+    </style>
+
+    <style name="buttonConfigDefault">
+        <item name="android:textColor">@color/buttonTextDefault</item>
+        <item name="android:background">@color/buttonBackgroundDefault</item>
+    </style>
 </resources>

@@ -3,18 +3,25 @@ package com.example.rahul.asg4_rxs161630;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.Console;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
     ListViewAdapter contactAdapter;
     FileManager lff = new FileManager(context);
     public final static String EXTRA_CONTACT_NAME = "com.example.rahul.asg4_rx2161630.NAME";
+    public final static String EXTRA_CONTACT_LNAME = "com.example.rahul.asg4_rx2161630.LNAME";
     public final static String EXTRA_CONTACT_PHONE = "com.example.rahul.asg4_rx2161630.PHONE";
     public final static String EXTRA_CONTACT_EMAIL = "com.example.rahul.asg4_rx2161630.EMAIL";
+    public final static String EXTRA_CONTACT_INDEX = "com.example.rahul.asg4_rx2161630.INDEX";
 
     @Override
     protected void onRestart() {
@@ -44,17 +53,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        lff.WriteIntoFile(myList);
     }
-
+    //changes
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //theme
+
+        ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         lvContact = (ListView) findViewById(R.id.lv_contact);
-        //getData();=
         myList = lff.ReadFromFile();
         contactAdapter = new ListViewAdapter(context,myList);
         lvContact.setAdapter(contactAdapter);
@@ -65,27 +76,66 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                Intent intent = new Intent(context,AddContact.class);
+                intent.putExtra("EXTRA_TYPE","ADD");
+                startActivityForResult(intent,0);
             }
         });
 
-        /*lvContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                ListData data = (ListData) lvContact.getItemAtPosition(position);
-                Intent intent = new Intent(context,AddContact.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(EXTRA_CONTACT_NAME,data.getName());
-                bundle.putString(EXTRA_CONTACT_EMAIL,data.getEmail());
-                bundle.putString(EXTRA_CONTACT_PHONE,data.getPhone());
-                bundle.putString("EXTRA_TYPE","EDIT");
-                intent.putExtras(bundle);
-                startActivity(intent);
-                Toast.makeText(context, "Opening contact information", Toast.LENGTH_SHORT).show();
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                try
+                {
+                    final ListData data = (ListData) lvContact.getItemAtPosition(position);
+                    PopupMenu popup = new PopupMenu(context, view);
+                    popup.getMenuInflater().inflate(R.menu.listview_popup,popup.getMenu());
+                    popup.show();
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId())
+                            {
+                                case R.id.call_contact:
+                                    try{
+                                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + data.getPhone()));
+                                        startActivity(intent);
+                                    }
+                                    catch(SecurityException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    break;
+                                case R.id.email_contact:
+                                    Intent email = new Intent(Intent.ACTION_SEND);
+                                    email.setType("plain/text");
+                                    email.putExtra(Intent.EXTRA_EMAIL, new String[] { data.getEmail() });
+                                    if (email.resolveActivity(getPackageManager()) != null) {
+                                        startActivity(Intent.createChooser(email, ""));
+                                    }
+                                    break;
+                                case R.id.update_contact:
+                                    Intent intent = new Intent(context,EditContact.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString(EXTRA_CONTACT_NAME,data.getName());
+                                    bundle.putString(EXTRA_CONTACT_EMAIL,data.getEmail());
+                                    bundle.putString(EXTRA_CONTACT_PHONE,data.getPhone());
+                                    bundle.putString(EXTRA_CONTACT_LNAME,data.getLName());
+                                    bundle.putInt(EXTRA_CONTACT_INDEX,position);
+                                    intent.putExtras(bundle);
+                                    startActivityForResult(intent,1);
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
             }
-        });*/
+        });
     }
 
 
@@ -113,6 +163,34 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("EXTRA_TYPE","ADD");
             startActivityForResult(intent,0);
         }
+        else if(id == R.id.sort_first)
+        {
+            Collections.sort(myList, new Comparator<ListData>() {
+                @Override
+                public int compare(ListData o1, ListData o2) {
+                    return  o1.name.compareTo(o2.name);
+                }
+            });
+            contactAdapter.notifyDataSetChanged();
+        }
+        else if(id == R.id.sort_last)
+        {
+            Collections.sort(myList, new Comparator<ListData>() {
+                @Override
+                public int compare(ListData o1, ListData o2) {
+                    return  o1.lname.compareTo(o2.lname);
+                }
+            });
+            contactAdapter.notifyDataSetChanged();
+        }
+        else if(id == R.id.theme_dark_btn)
+        {
+            ThemeUtils.changeToTheme(this, ThemeUtils.THEME_DARK);
+        }
+        else if(id == R.id.theme_light_btn)
+        {
+            ThemeUtils.changeToTheme(this, ThemeUtils.THEME_WHITE);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -127,10 +205,35 @@ public class MainActivity extends AppCompatActivity {
                 listData.setName(data.getStringExtra("Name"));
                 listData.setPhone(data.getStringExtra("Phone"));
                 listData.setEmail(data.getStringExtra("Email"));
-                Toast.makeText(context,data.getStringExtra("Name"),Toast.LENGTH_SHORT).show();
+                listData.setLName(data.getStringExtra("LName"));
+                listData.setImgResId(R.mipmap.contact_image);
+                Toast.makeText(context,data.getStringExtra("LName"),Toast.LENGTH_SHORT).show();
                 myList.add(listData);
                 contactAdapter.notifyDataSetChanged();
                 lff.WriteIntoFile(myList);
+            }
+        }
+        if(requestCode == 1)
+        {
+            if(resultCode == Activity.RESULT_OK)
+            {
+                String type = data.getStringExtra("TYPE");
+                int index = data.getIntExtra(MainActivity.EXTRA_CONTACT_INDEX,-2);
+                if(type.equals("DELETE"))
+                {
+                    myList.remove(index);
+                    contactAdapter.notifyDataSetChanged();
+                    lff.WriteIntoFile(myList);
+                }
+                else if(type.equals("UPDATE"))
+                {
+                    myList.get(index).setName(data.getStringExtra(MainActivity.EXTRA_CONTACT_NAME));
+                    myList.get(index).setLName(data.getStringExtra(MainActivity.EXTRA_CONTACT_LNAME));
+                    myList.get(index).setPhone(data.getStringExtra(MainActivity.EXTRA_CONTACT_PHONE));
+                    myList.get(index).setEmail(data.getStringExtra(MainActivity.EXTRA_CONTACT_EMAIL));
+                    contactAdapter.notifyDataSetChanged();
+                    lff.WriteIntoFile(myList);
+                }
             }
         }
     }

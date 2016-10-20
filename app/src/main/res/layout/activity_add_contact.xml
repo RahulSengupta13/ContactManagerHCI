@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.rahul.asg4_rxs161630.EditContact"
+    tools:context="com.example.rahul.asg4_rxs161630.AddContact"
     android:orientation="vertical"
     style="?appBackground">
 
@@ -19,19 +19,18 @@
         android:padding="8dp">
 
         <TextView
-            android:text="Name"
+            android:text=" First Name"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:id="@+id/tved_name_update"
-            style="?appTextColor"/>
+            style="?appTextColor"
+            android:id="@+id/tved_name"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ed_name_update"
-            android:inputType="textPersonName"
+            android:id="@+id/ed_name"
             style="?appTextColor"
-            android:hint="Update Name"/>
+            android:inputType="textPersonName"/>
 
     </LinearLayout>
 
@@ -46,15 +45,14 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             style="?appTextColor"
-            android:id="@+id/tved_lname_update"/>
+            android:id="@+id/tved_lname"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ed_lname_update"
-            android:inputType="textPersonName"
             style="?appTextColor"
-            android:hint="Update Last Name"/>
+            android:id="@+id/ed_lname"
+            android:inputType="textPersonName"/>
 
     </LinearLayout>
 
@@ -69,14 +67,13 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             style="?appTextColor"
-            android:id="@+id/tved_phone_update" />
+            android:id="@+id/tved_phone" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ed_phone_update"
             style="?appTextColor"
-            android:hint="Update Phone Number"
+            android:id="@+id/ed_phone"
             android:inputType="phone" />
 
     </LinearLayout>
@@ -91,15 +88,14 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             style="?appTextColor"
-            android:id="@+id/tved_email_update" />
+            android:id="@+id/tved_email" />
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/ed_email_update"
             style="?appTextColor"
-            android:inputType="textEmailAddress"
-            android:hint="Update Email"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/ed_email"
+            android:inputType="textEmailAddress"/>
 
     </LinearLayout>
 
@@ -114,16 +110,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="?buttonConfig"
-            android:id="@+id/buttonSave_update"
-            android:layout_marginRight="10dp"/>
-
-        <Button
-            android:text="Delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?buttonConfig"
-            android:id="@+id/buttonDelete"/>
+            android:id="@+id/buttonSave"/>
 
     </LinearLayout>
-
 </LinearLayout>

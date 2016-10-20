@@ -43,8 +43,9 @@ public class FileManager {
                     String[] contact = line.split("\t");
                     ListData data = new ListData();
                     data.setName(contact[0]);
-                    data.setPhone(contact[1]);
-                    data.setEmail(contact[2]);
+                    data.setLName(contact[1]);
+                    data.setPhone(contact[2]);
+                    data.setEmail(contact[3]);
                     myList.add(data);
                 }
                 fileReader.close();
@@ -73,8 +74,8 @@ public class FileManager {
             FileWriter fileWriter = new FileWriter(ContactsFile);
             BufferedWriter writer = new BufferedWriter(fileWriter);
             for (ListData data :myList) {
-                writer.write(data.getName()+"\t"+data.getPhone()+"\t"+data.getEmail()+"\n");
-                System.out.println(data.getName()+"\t"+data.getPhone()+"\t"+data.getEmail());
+                writer.write(data.getName()+"\t"+data.getLName()+"\t"+data.getPhone()+"\t"+data.getEmail()+"\n");
+                System.out.println(data.getName()+"\t"+data.getLName()+"\t"+data.getPhone()+"\t"+data.getEmail());
             }
             writer.close();
             fileWriter.close();
