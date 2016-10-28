@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+//Main Activity
 public class MainActivity extends AppCompatActivity {
 
     ListView lvContact;
