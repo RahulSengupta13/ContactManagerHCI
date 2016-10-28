@@ -11,15 +11,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by rahul on 10/19/2016.
- */
-
+//Adapter for the listview
 public class ListViewAdapter extends BaseAdapter {
     ArrayList<ListData> myList = new ArrayList();
     LayoutInflater inflater;
     Context context;
-
     public ListViewAdapter(Context context, ArrayList myList){
         this.myList = myList;
         this.context = context;
@@ -29,17 +25,14 @@ public class ListViewAdapter extends BaseAdapter {
     public int getCount() {
         return myList.size();
     }
-
     @Override
     public ListData getItem(int position) {
         return myList.get(position);
     }
-
     @Override
     public long getItemId(int position) {
         return 0;
     }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder myViewHolder;
@@ -59,7 +52,6 @@ public class ListViewAdapter extends BaseAdapter {
         myViewHolder.image.setImageResource(R.mipmap.contact_image);
         return convertView;
     }
-
     private class ViewHolder{
         TextView name,email,phone,lname;
         ImageView image;

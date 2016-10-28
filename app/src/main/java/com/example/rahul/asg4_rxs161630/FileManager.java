@@ -11,10 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
-/**
- * Created by rahul on 10/20/2016.
- */
-
+//File Manager for the application
 public class FileManager {
 
     Context context;
@@ -23,7 +20,6 @@ public class FileManager {
         String state = Environment.getExternalStorageState();
         this.context = context;
     }
-
     public ArrayList ReadFromFile()
     {
         try {
@@ -62,7 +58,6 @@ public class FileManager {
             return new ArrayList();
         }
     }
-
     public void WriteIntoFile(ArrayList<ListData> myList)
     {
         try{

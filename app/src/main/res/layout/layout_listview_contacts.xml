@@ -36,14 +36,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/contact_Lname"
-                android:text="LName"
                 style="?appTextColor"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/contact_name"
-                android:text="Name"
                 style="?appTextColor"/>
 
         </LinearLayout>
@@ -63,7 +61,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:id="@+id/contact_email"
-                android:text="Email"
                 style="?appTextColor"/>
 
         </LinearLayout>
@@ -84,7 +81,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:id="@+id/contact_phone"
-                android:text="Mobile"
                 style="?appTextColor"/>
 
         </LinearLayout>

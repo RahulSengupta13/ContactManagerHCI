@@ -1,3 +1,24 @@
+/*=============================================================================
+ |       Author:  Rahul Sengupta
+ |     Language:  Java
+ |
+ +-----------------------------------------------------------------------------
+ |
+ |  Description:  A Contact Manager for Android.
+ |
+ |        Input:  The program takes in the First Name, Last Name, Email and Mobile Number as inputs and saves them on a text file in the     |                External Memory.
+ |
+ |       Output:  A text file with maintained contacts in the External Memory.
+ |
+ |    Algorithm:  -
+ |
+ |   Required Features Not Included:  -
+ |
+ |   Known Bugs:  -
+ |
+ *===========================================================================*/
+
+
 package com.example.rahul.asg4_rxs161630;
 
 import android.app.Activity;
@@ -35,54 +56,57 @@ public class MainActivity extends AppCompatActivity {
     public final static String EXTRA_CONTACT_PHONE = "com.example.rahul.asg4_rx2161630.PHONE";
     public final static String EXTRA_CONTACT_EMAIL = "com.example.rahul.asg4_rx2161630.EMAIL";
     public final static String EXTRA_CONTACT_INDEX = "com.example.rahul.asg4_rx2161630.INDEX";
-
     @Override
     protected void onRestart() {
         super.onRestart();
         Toast.makeText(context,"Activity Restarted", Toast.LENGTH_SHORT).show();
         contactAdapter.notifyDataSetChanged();
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Toast.makeText(context,"Application shutting down", Toast.LENGTH_SHORT).show();
         lff.WriteIntoFile(myList);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
     }
-    //changes
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //theme
-
+        //Set the Theme for the Application
         ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         lvContact = (ListView) findViewById(R.id.lv_contact);
+
+        //Read Contacts from file & sort according to First Name
         myList = lff.ReadFromFile();
+        Collections.sort(myList, new Comparator<ListData>() {
+            @Override
+            public int compare(ListData o1, ListData o2) {
+                return  o1.name.compareTo(o2.name);
+            }
+        });
         contactAdapter = new ListViewAdapter(context,myList);
+
+        //Set the Adapter
         lvContact.setAdapter(contactAdapter);
-        if(myList.size() == 0)
-            Toast.makeText(context,"No contacts found", Toast.LENGTH_SHORT).show();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(context,AddContact.class);
                 intent.putExtra("EXTRA_TYPE","ADD");
                 startActivityForResult(intent,0);
             }
         });
 
+        //Define listener for listview
         lvContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -116,8 +140,10 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     break;
                                 case R.id.update_contact:
-                                    Intent intent = new Intent(context,EditContact.class);
+//                                    Intent intent = new Intent(context,EditContact.class);
+                                    Intent intent = new Intent(context,AddContact.class);
                                     Bundle bundle = new Bundle();
+                                    bundle.putString("TYPE","EDIT");
                                     bundle.putString(EXTRA_CONTACT_NAME,data.getName());
                                     bundle.putString(EXTRA_CONTACT_EMAIL,data.getEmail());
                                     bundle.putString(EXTRA_CONTACT_PHONE,data.getPhone());
@@ -137,15 +163,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -160,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         else if(id == R.id.action_add_contact)
         {
             Intent intent = new Intent(context,AddContact.class);
-            intent.putExtra("EXTRA_TYPE","ADD");
+            intent.putExtra("TYPE","ADD");
             startActivityForResult(intent,0);
         }
         else if(id == R.id.sort_first)
@@ -193,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -202,13 +224,18 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK)
             {
                 ListData listData = new ListData();
-                listData.setName(data.getStringExtra("Name"));
-                listData.setPhone(data.getStringExtra("Phone"));
-                listData.setEmail(data.getStringExtra("Email"));
-                listData.setLName(data.getStringExtra("LName"));
+                listData.setName(data.getStringExtra(MainActivity.EXTRA_CONTACT_NAME));
+                listData.setPhone(data.getStringExtra(MainActivity.EXTRA_CONTACT_PHONE));
+                listData.setEmail(data.getStringExtra(MainActivity.EXTRA_CONTACT_EMAIL));
+                listData.setLName(data.getStringExtra(MainActivity.EXTRA_CONTACT_LNAME));
                 listData.setImgResId(R.mipmap.contact_image);
-                Toast.makeText(context,data.getStringExtra("LName"),Toast.LENGTH_SHORT).show();
                 myList.add(listData);
+                Collections.sort(myList, new Comparator<ListData>() {
+                    @Override
+                    public int compare(ListData o1, ListData o2) {
+                        return  o1.name.compareTo(o2.name);
+                    }
+                });
                 contactAdapter.notifyDataSetChanged();
                 lff.WriteIntoFile(myList);
             }
@@ -225,12 +252,18 @@ public class MainActivity extends AppCompatActivity {
                     contactAdapter.notifyDataSetChanged();
                     lff.WriteIntoFile(myList);
                 }
-                else if(type.equals("UPDATE"))
+                else if(type.equals("EDIT"))
                 {
                     myList.get(index).setName(data.getStringExtra(MainActivity.EXTRA_CONTACT_NAME));
                     myList.get(index).setLName(data.getStringExtra(MainActivity.EXTRA_CONTACT_LNAME));
                     myList.get(index).setPhone(data.getStringExtra(MainActivity.EXTRA_CONTACT_PHONE));
                     myList.get(index).setEmail(data.getStringExtra(MainActivity.EXTRA_CONTACT_EMAIL));
+                    Collections.sort(myList, new Comparator<ListData>() {
+                        @Override
+                        public int compare(ListData o1, ListData o2) {
+                            return  o1.name.compareTo(o2.name);
+                        }
+                    });
                     contactAdapter.notifyDataSetChanged();
                     lff.WriteIntoFile(myList);
                 }

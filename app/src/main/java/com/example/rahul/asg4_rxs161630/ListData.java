@@ -1,9 +1,6 @@
 package com.example.rahul.asg4_rxs161630;
 
-/**
- * Created by rahul on 10/19/2016.
- */
-
+//Model for the list view
 public class ListData {
     String name,email,phone, lname;
     int imgResId;

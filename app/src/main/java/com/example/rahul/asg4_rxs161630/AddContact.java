@@ -12,50 +12,52 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 
+//Activity to manage addition/updation of contacts
 public class AddContact extends AppCompatActivity {
 
     EditText Name,Email,Phone, LName;
-    Button Save;
+    Button Save, Delete, Discard;
+    String type;
+    int index;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         ThemeUtils.onActivityCreateSetTheme(this);
-
-
         setContentView(R.layout.activity_add_contact);
         Name = (EditText)findViewById(R.id.ed_name);
         Email = (EditText)findViewById(R.id.ed_email);
         Phone = (EditText)findViewById(R.id.ed_phone);
         LName = (EditText)findViewById(R.id.ed_lname);
         Save = (Button)findViewById(R.id.buttonSave);
+        Delete = (Button)findViewById(R.id.buttonADelete);
+        Discard = (Button)findViewById(R.id.buttonADiscard);
         try
         {
             String name = getIntent().getExtras().getString(MainActivity.EXTRA_CONTACT_NAME);
-            String lname = getIntent().getExtras().getString(MainActivity.EXTRA_CONTACT_NAME);
+            String lname = getIntent().getExtras().getString(MainActivity.EXTRA_CONTACT_LNAME);
             String email = getIntent().getExtras().getString(MainActivity.EXTRA_CONTACT_EMAIL);
             String phone = getIntent().getExtras().getString(MainActivity.EXTRA_CONTACT_PHONE);
-            String type = getIntent().getExtras().getString("EXTRA_TYPE");
+            index = getIntent().getExtras().getInt(MainActivity.EXTRA_CONTACT_INDEX);
+            type = getIntent().getExtras().getString("TYPE");
             if(type.equals("EDIT")){
                 Name.setText(name);
                 Email.setText(email);
                 Phone.setText(phone);
+                LName.setText(lname);
             }
-            else
+            else if(type.equals("ADD"))
             {
                 Name.setHint("Enter Contact Name");
                 LName.setHint("Enter Last Name");
                 Email.setHint("Enter Email Address");
                 Phone.setHint("Enter Phone Number");
+                Delete.setVisibility(View.INVISIBLE);
             }
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
-
-
         Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,10 +69,17 @@ public class AddContact extends AppCompatActivity {
                     if(ValidationUtilities.isValidPhone(contactPhone)){
                         if(ValidationUtilities.isValidEmail(contactEmail)) {
                             Intent returnIntent = new Intent();
-                            returnIntent.putExtra("Name",contactName);
-                            returnIntent.putExtra("Phone",contactPhone);
-                            returnIntent.putExtra("Email",contactEmail);
-                            returnIntent.putExtra("LName",contactLName);
+                            returnIntent.putExtra(MainActivity.EXTRA_CONTACT_NAME,contactName);
+                            returnIntent.putExtra(MainActivity.EXTRA_CONTACT_PHONE,contactPhone);
+                            returnIntent.putExtra(MainActivity.EXTRA_CONTACT_EMAIL,contactEmail);
+                            returnIntent.putExtra(MainActivity.EXTRA_CONTACT_LNAME,contactLName);
+                            if(type.equals("EDIT"))
+                            {
+                                returnIntent.putExtra(MainActivity.EXTRA_CONTACT_INDEX,index);
+                                returnIntent.putExtra("TYPE","EDIT");
+                            }
+                            else
+                                returnIntent.putExtra("TYPE","ADD");
                             setResult(Activity.RESULT_OK,returnIntent);
                             finish();
                         }
@@ -91,6 +100,22 @@ public class AddContact extends AppCompatActivity {
                     Name.setError("Enter a valid name");
                     Name.requestFocus();
                 }
+            }
+        });
+        Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("TYPE","DELETE");
+                returnIntent.putExtra(MainActivity.EXTRA_CONTACT_INDEX,index);
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
+            }
+        });
+        Discard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
